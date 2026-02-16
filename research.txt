@@ -1,0 +1,5 @@
+Backend Design Concepts
+    - DTO (Data Transfer Object), create special object instead of using model
+
+Request categories
+    - Safe and Idempotent Requests

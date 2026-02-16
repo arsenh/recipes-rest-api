@@ -1,2 +1,1 @@
-# recipes-rest-api
-Recipes REST API
+swag init -g ./main.go -o ./docs

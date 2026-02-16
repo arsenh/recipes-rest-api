@@ -1,0 +1,127 @@
+[
+  {
+    "id": "rec-101",
+    "name": "Classic Pancakes",
+    "tags": ["breakfast", "sweet", "easy"],
+    "ingredients": [
+      "2 cups all-purpose flour",
+      "2 eggs",
+      "1.5 cups milk",
+      "2 tbsp sugar",
+      "1 tsp baking powder",
+      "Pinch of salt"
+    ],
+    "instructions": [
+      "Mix all dry ingredients in a bowl.",
+      "Whisk eggs and milk together.",
+      "Combine wet and dry ingredients until smooth.",
+      "Heat a pan over medium heat.",
+      "Pour batter and cook until bubbles form.",
+      "Flip and cook until golden."
+    ],
+    "publishedAt": "2025-01-10T09:30:00Z"
+  },
+  {
+    "id": "rec-102",
+    "name": "Spaghetti Carbonara",
+    "tags": ["italian", "pasta", "dinner"],
+    "ingredients": [
+      "200g spaghetti",
+      "100g pancetta",
+      "2 eggs",
+      "50g parmesan cheese",
+      "Black pepper",
+      "Salt"
+    ],
+    "instructions": [
+      "Boil spaghetti in salted water.",
+      "Fry pancetta until crispy.",
+      "Beat eggs with parmesan and pepper.",
+      "Drain pasta and remove from heat.",
+      "Mix pasta quickly with pancetta and egg mixture."
+    ],
+    "publishedAt": "2025-01-15T18:45:00Z"
+  },
+  {
+    "id": "rec-103",
+    "name": "Chicken Stir Fry",
+    "tags": ["asian", "quick", "dinner"],
+    "ingredients": [
+      "300g chicken breast",
+      "Bell peppers",
+      "Onion",
+      "Soy sauce",
+      "Garlic",
+      "Vegetable oil"
+    ],
+    "instructions": [
+      "Slice chicken and vegetables.",
+      "Heat oil in a wok.",
+      "Cook chicken until browned.",
+      "Add vegetables and garlic.",
+      "Stir fry and add soy sauce."
+    ],
+    "publishedAt": "2025-01-20T17:20:00Z"
+  },
+  {
+    "id": "rec-104",
+    "name": "Greek Salad",
+    "tags": ["salad", "vegetarian", "healthy"],
+    "ingredients": [
+      "Tomatoes",
+      "Cucumber",
+      "Red onion",
+      "Feta cheese",
+      "Olives",
+      "Olive oil"
+    ],
+    "instructions": [
+      "Chop vegetables.",
+      "Mix vegetables in a bowl.",
+      "Add feta and olives.",
+      "Drizzle with olive oil."
+    ],
+    "publishedAt": "2025-02-01T12:00:00Z"
+  },
+  {
+    "id": "rec-105",
+    "name": "Beef Burger",
+    "tags": ["fast-food", "grill", "lunch"],
+    "ingredients": [
+      "500g ground beef",
+      "Burger buns",
+      "Salt",
+      "Black pepper",
+      "Cheese slices"
+    ],
+    "instructions": [
+      "Season ground beef.",
+      "Form burger patties.",
+      "Grill patties until cooked.",
+      "Add cheese on top.",
+      "Assemble burgers with buns."
+    ],
+    "publishedAt": "2025-02-10T14:10:00Z"
+  },
+  {
+    "id": "rec-106",
+    "name": "Vegetable Soup",
+    "tags": ["soup", "vegetarian", "comfort-food"],
+    "ingredients": [
+      "Carrots",
+      "Potatoes",
+      "Onion",
+      "Celery",
+      "Vegetable stock",
+      "Salt"
+    ],
+    "instructions": [
+      "Chop all vegetables.",
+      "Cook vegetables in a pot.",
+      "Add vegetable stock.",
+      "Simmer until vegetables are soft.",
+      "Season and serve."
+    ],
+    "publishedAt": "2025-02-18T16:00:00Z"
+  }
+]
