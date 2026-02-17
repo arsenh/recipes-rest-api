@@ -6,8 +6,10 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -15,6 +17,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 
 	docs "github.com/arsenh/recipes-api/docs"
 	swaggerfiles "github.com/swaggo/files"
@@ -32,6 +37,10 @@ type Recipe struct {
 
 var recipes []Recipe
 
+var ctx context.Context
+var err error
+var client *mongo.Client
+
 func init() {
 	bytes, err := os.ReadFile("DB.json")
 	if err != nil {
@@ -41,6 +50,31 @@ func init() {
 	if err = json.Unmarshal(bytes, &recipes); err != nil {
 		fmt.Println("Error on parsing json DB data")
 	}
+
+	ctx = context.Background()
+	client, err := mongo.Connect(
+		ctx,
+		options.Client().ApplyURI(os.Getenv("MONGO_URI")),
+	)
+
+	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
+		fmt.Println("Cannot connect to MongoDB")
+		log.Fatal(err)
+	}
+	fmt.Println("Connected to MongoDB")
+
+	var listOfRecipes []interface{}
+	for _, recipe := range recipes {
+		listOfRecipes = append(listOfRecipes, recipe)
+	}
+
+	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("recipes")
+
+	insertManyResult, err := collection.InsertMany(ctx, listOfRecipes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Iserted recipes: ", len(insertManyResult.InsertedIDs))
 }
 
 // ListRecipesHandler godoc
