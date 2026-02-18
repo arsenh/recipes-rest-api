@@ -1,23 +1,29 @@
+// @title Recipes API
+// @version 1.0
+// @description Simple REST API for managing recipes
+// @BasePath /
+// @schemes http https
+// @host localhost:8080
+// @contact.name Arsen
+// @contact.email your.email@example.com
+// @license.name MIT
+
 package handlers
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
+	"github.com/arsenh/recipes-api/internal/models"
 	"github.com/arsenh/recipes-api/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+var recipes []models.Recipe
+
+// RecipeHandler handles all recipe-related HTTP requests
 type RecipeHandler struct {
 	service *service.RecipeService
 }
@@ -26,63 +32,13 @@ func NewRecipeHander(service *service.RecipeService) *RecipeHandler {
 	return &RecipeHandler{service: service}
 }
 
-type Recipe struct {
-	ID           string    `json:"id"`
-	Name         string    `json:"name" binding:"required"`
-	Tags         []string  `json:"tags" binding:"required"`
-	Ingredients  []string  `json:"ingredients" binding:"required"`
-	Instructions []string  `json:"instructions" binding:"required"`
-	PublishedAt  time.Time `json:"publishedAt"`
-}
-
-var recipes []Recipe
-
-var ctx context.Context
-var err error
-var client *mongo.Client
-
-func init() {
-	bytes, err := os.ReadFile("DB.json")
-	if err != nil {
-		fmt.Println("Cannot open DB.json file")
-		os.Exit(-1)
-	}
-	if err = json.Unmarshal(bytes, &recipes); err != nil {
-		fmt.Println("Error on parsing json DB data")
-	}
-
-	ctx = context.Background()
-	client, err := mongo.Connect(
-		ctx,
-		options.Client().ApplyURI(os.Getenv("MONGO_URI")),
-	)
-
-	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
-		fmt.Println("Cannot connect to MongoDB")
-		log.Fatal(err)
-	}
-	fmt.Println("Connected to MongoDB")
-
-	var listOfRecipes []interface{}
-	for _, recipe := range recipes {
-		listOfRecipes = append(listOfRecipes, recipe)
-	}
-
-	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("recipes")
-
-	insertManyResult, err := collection.InsertMany(ctx, listOfRecipes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Iserted recipes: ", len(insertManyResult.InsertedIDs))
-}
-
 // ListRecipesHandler godoc
 // @Summary List all recipes
-// @Description Get all recipes
+// @Description Returns the complete list of recipes currently in the system
 // @Tags recipes
 // @Produce json
-// @Success 200 {array} Recipe
+// @Success 200 {array} models.Recipe
+// @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes [get]
 func (h *RecipeHandler) ListRecipesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, recipes)
@@ -90,15 +46,17 @@ func (h *RecipeHandler) ListRecipesHandler(c *gin.Context) {
 
 // NewRecipeHandler godoc
 // @Summary Create a new recipe
+// @Description Creates a new recipe and returns it with generated ID and timestamp
 // @Tags recipes
 // @Accept json
 // @Produce json
-// @Param recipe body Recipe true "Recipe data"
-// @Success 201 {object} Recipe
-// @Failure 400
+// @Param recipe body models.Recipe true "Recipe data"
+// @Success 201 {object} models.Recipe
+// @Failure 400 {object} map[string]string "Invalid request body"
+// @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes [post]
 func (h *RecipeHandler) NewRecipeHandler(c *gin.Context) {
-	var recipe Recipe
+	var recipe models.Recipe
 	if err := c.ShouldBindJSON(&recipe); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
@@ -112,19 +70,22 @@ func (h *RecipeHandler) NewRecipeHandler(c *gin.Context) {
 }
 
 // UpdateRecipeHandler godoc
-// @Summary Update a recipe
+// @Summary Update an existing recipe
+// @Description Updates a recipe by ID
 // @Tags recipes
 // @Accept json
 // @Produce json
 // @Param id path string true "Recipe ID"
-// @Param recipe body Recipe true "Recipe data"
-// @Success 200 {object} Recipe
-// @Failure 404
+// @Param recipe body models.Recipe true "Updated recipe data"
+// @Success 200 {object} models.Recipe
+// @Failure 400 {object} map[string]string "Invalid request body"
+// @Failure 404 {object} map[string]string "Recipe not found"
+// @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/{id} [put]
 func (h *RecipeHandler) UpdateRecipeHandler(c *gin.Context) {
 	id := c.Param("id")
 
-	var recipe Recipe
+	var recipe models.Recipe
 	if err := c.ShouldBindJSON(&recipe); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
@@ -153,11 +114,13 @@ func (h *RecipeHandler) UpdateRecipeHandler(c *gin.Context) {
 
 // DeleteRecipeHandler godoc
 // @Summary Delete a recipe
+// @Description Deletes a recipe by ID
 // @Tags recipes
 // @Produce json
 // @Param id path string true "Recipe ID"
-// @Success 200
-// @Failure 404
+// @Success 200 {object} map[string]string "Recipe has been deleted"
+// @Failure 404 {object} map[string]string "Recipe not found"
+// @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/{id} [delete]
 func (h *RecipeHandler) DeleteRecipeHandler(c *gin.Context) {
 	id := c.Param("id")
@@ -180,14 +143,17 @@ func (h *RecipeHandler) DeleteRecipeHandler(c *gin.Context) {
 
 // SearchRecipeHandler godoc
 // @Summary Search recipes by tag
+// @Description Returns all recipes that contain the given tag (case-insensitive)
 // @Tags recipes
 // @Produce json
-// @Param tag query string true "Recipe tag"
-// @Success 200 {array} Recipe
+// @Param tag query string true "Recipe tag (e.g. 'vegan', 'dessert')"
+// @Success 200 {array} models.Recipe
+// @Failure 400 {object} map[string]string "Tag parameter is required"
+// @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/search [get]
 func (h *RecipeHandler) SearchRecipeHandler(c *gin.Context) {
 	tag := c.Query("tag")
-	listOfRecipes := make([]Recipe, 0)
+	listOfRecipes := make([]models.Recipe, 0)
 
 	for i := 0; i < len(recipes); i++ {
 		found := false
