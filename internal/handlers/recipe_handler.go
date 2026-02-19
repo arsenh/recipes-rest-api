@@ -13,13 +13,11 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"strings"
-	"time"
 
+	apperrors "github.com/arsenh/recipes-api/internal/errors"
 	"github.com/arsenh/recipes-api/internal/models"
 	"github.com/arsenh/recipes-api/internal/service"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/xid"
 )
 
 var recipes []models.Recipe
@@ -65,7 +63,25 @@ func (h *RecipeHandler) ListRecipesHandler(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/{id} [get]
 func (h *RecipeHandler) GetRecipeByIdHandler(c *gin.Context) {
+	id := c.Param("id")
+	recipe, err := h.service.GetRecipeById(c.Request.Context(), id)
 
+	if err != nil {
+		switch err {
+		case apperrors.ErrBadID:
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+
+		case apperrors.ErrNotFound:
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, recipe)
 }
 
 // NewRecipeHandler godoc
@@ -80,17 +96,17 @@ func (h *RecipeHandler) GetRecipeByIdHandler(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes [post]
 func (h *RecipeHandler) NewRecipeHandler(c *gin.Context) {
-	var recipe models.Recipe
-	if err := c.ShouldBindJSON(&recipe); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-		return
-	}
-	recipe.ID = xid.New().String()
-	recipe.PublishedAt = time.Now()
-	recipes = append(recipes, recipe)
-	c.JSON(http.StatusCreated, recipe)
+	// var recipe models.Recipe
+	// if err := c.ShouldBindJSON(&recipe); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// recipe.ID = xid.New().String()
+	// recipe.PublishedAt = time.Now()
+	// recipes = append(recipes, recipe)
+	// c.JSON(http.StatusCreated, recipe)
 }
 
 // UpdateRecipeHandler godoc
@@ -107,33 +123,33 @@ func (h *RecipeHandler) NewRecipeHandler(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/{id} [put]
 func (h *RecipeHandler) UpdateRecipeHandler(c *gin.Context) {
-	id := c.Param("id")
+	// id := c.Param("id")
 
-	var recipe models.Recipe
-	if err := c.ShouldBindJSON(&recipe); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-		return
-	}
+	// var recipe models.Recipe
+	// if err := c.ShouldBindJSON(&recipe); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
 
-	index := -1
+	// index := -1
 
-	for i := 0; i < len(recipes); i++ {
-		if recipes[i].ID == id {
-			index = i
-		}
-	}
+	// for i := 0; i < len(recipes); i++ {
+	// 	if recipes[i].ID == id {
+	// 		index = i
+	// 	}
+	// }
 
-	if index == -1 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Recipe not found",
-		})
-		return
-	}
-	recipe.ID = id
-	recipes[index] = recipe
-	c.JSON(http.StatusOK, recipe)
+	// if index == -1 {
+	// 	c.JSON(http.StatusNotFound, gin.H{
+	// 		"error": "Recipe not found",
+	// 	})
+	// 	return
+	// }
+	// recipe.ID = id
+	// recipes[index] = recipe
+	// c.JSON(http.StatusOK, recipe)
 }
 
 // DeleteRecipeHandler godoc
@@ -147,22 +163,22 @@ func (h *RecipeHandler) UpdateRecipeHandler(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/{id} [delete]
 func (h *RecipeHandler) DeleteRecipeHandler(c *gin.Context) {
-	id := c.Param("id")
+	// id := c.Param("id")
 
-	index := -1
-	for i := 0; i < len(recipes); i++ {
-		if recipes[i].ID == id {
-			index = i
-		}
-	}
-	if index == -1 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Recipe not found"})
-		return
-	}
+	// index := -1
+	// for i := 0; i < len(recipes); i++ {
+	// 	if recipes[i].ID == id {
+	// 		index = i
+	// 	}
+	// }
+	// if index == -1 {
+	// 	c.JSON(http.StatusNotFound, gin.H{
+	// 		"error": "Recipe not found"})
+	// 	return
+	// }
 
-	recipes = append(recipes[:index], recipes[index+1:]...)
-	c.JSON(http.StatusOK, gin.H{"message": "Recipe has been deleted"})
+	// recipes = append(recipes[:index], recipes[index+1:]...)
+	// c.JSON(http.StatusOK, gin.H{"message": "Recipe has been deleted"})
 }
 
 // SearchRecipeHandler godoc
@@ -176,20 +192,20 @@ func (h *RecipeHandler) DeleteRecipeHandler(c *gin.Context) {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes/search [get]
 func (h *RecipeHandler) SearchRecipeHandler(c *gin.Context) {
-	tag := c.Query("tag")
-	listOfRecipes := make([]models.Recipe, 0)
+	// tag := c.Query("tag")
+	// listOfRecipes := make([]models.Recipe, 0)
 
-	for i := 0; i < len(recipes); i++ {
-		found := false
-		for _, t := range recipes[i].Tags {
-			if strings.EqualFold(t, tag) {
-				found = true
-			}
-		}
+	// for i := 0; i < len(recipes); i++ {
+	// 	found := false
+	// 	for _, t := range recipes[i].Tags {
+	// 		if strings.EqualFold(t, tag) {
+	// 			found = true
+	// 		}
+	// 	}
 
-		if found {
-			listOfRecipes = append(listOfRecipes, recipes[i])
-		}
-	}
-	c.JSON(http.StatusOK, listOfRecipes)
+	// 	if found {
+	// 		listOfRecipes = append(listOfRecipes, recipes[i])
+	// 	}
+	// }
+	// c.JSON(http.StatusOK, listOfRecipes)
 }

@@ -1,12 +1,18 @@
 package models
 
-import "time"
+import (
+	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// swagger:parameters recipes newRecipe
 type Recipe struct {
-	ID           string    `json:"id" example:"ckx123abc456"`
-	Name         string    `json:"name" example:"Chocolate Chip Cookies" binding:"required"`
-	Tags         []string  `json:"tags" example:"[\"dessert\",\"vegan\"]" binding:"required"`
-	Ingredients  []string  `json:"ingredients" example:"[\"flour\",\"sugar\",\"chocolate\"]" binding:"required"`
-	Instructions []string  `json:"instructions" example:"[\"Mix ingredients\",\"Bake at 180°C\"]" binding:"required"`
-	PublishedAt  time.Time `json:"publishedAt" example:"2025-02-18T10:30:00Z"`
+	//swagger:ignore
+	ID           primitive.ObjectID `json:"id" bson:"_id"`
+	Name         string             `json:"name" bson:"name"`
+	Tags         []string           `json:"tags" bson:"tags"`
+	Ingredients  []string           `json:"ingredients" bson:"ingredients"`
+	Instructions []string           `json:"instructions" bson:"instructions"`
+	PublishedAt  time.Time          `json:"publishedAt" bson:"publishedAt"`
 }

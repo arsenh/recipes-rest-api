@@ -23,3 +23,7 @@ func (r *RecipeService) ListRecipes(ctx context.Context) ([]models.Recipe, error
 	}
 	return recipes, nil
 }
+
+func (r *RecipeService) GetRecipeById(ctx context.Context, id string) (*models.Recipe, error) {
+	return r.repo.GetByID(ctx, id)
+}

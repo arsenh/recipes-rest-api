@@ -1,8 +1,11 @@
 [
   {
-    "id": "rec-101",
     "name": "Classic Pancakes",
-    "tags": ["breakfast", "sweet", "easy"],
+    "tags": [
+      "breakfast",
+      "sweet",
+      "easy"
+    ],
     "ingredients": [
       "2 cups all-purpose flour",
       "2 eggs",
@@ -22,9 +25,12 @@
     "publishedAt": "2025-01-10T09:30:00Z"
   },
   {
-    "id": "rec-102",
     "name": "Spaghetti Carbonara",
-    "tags": ["italian", "pasta", "dinner"],
+    "tags": [
+      "italian",
+      "pasta",
+      "dinner"
+    ],
     "ingredients": [
       "200g spaghetti",
       "100g pancetta",
@@ -43,9 +49,12 @@
     "publishedAt": "2025-01-15T18:45:00Z"
   },
   {
-    "id": "rec-103",
     "name": "Chicken Stir Fry",
-    "tags": ["asian", "quick", "dinner"],
+    "tags": [
+      "asian",
+      "quick",
+      "dinner"
+    ],
     "ingredients": [
       "300g chicken breast",
       "Bell peppers",
@@ -64,9 +73,12 @@
     "publishedAt": "2025-01-20T17:20:00Z"
   },
   {
-    "id": "rec-104",
     "name": "Greek Salad",
-    "tags": ["salad", "vegetarian", "healthy"],
+    "tags": [
+      "salad",
+      "vegetarian",
+      "healthy"
+    ],
     "ingredients": [
       "Tomatoes",
       "Cucumber",
@@ -84,9 +96,12 @@
     "publishedAt": "2025-02-01T12:00:00Z"
   },
   {
-    "id": "rec-105",
     "name": "Beef Burger",
-    "tags": ["fast-food", "grill", "lunch"],
+    "tags": [
+      "fast-food",
+      "grill",
+      "lunch"
+    ],
     "ingredients": [
       "500g ground beef",
       "Burger buns",
@@ -104,9 +119,12 @@
     "publishedAt": "2025-02-10T14:10:00Z"
   },
   {
-    "id": "rec-106",
     "name": "Vegetable Soup",
-    "tags": ["soup", "vegetarian", "comfort-food"],
+    "tags": [
+      "soup",
+      "vegetarian",
+      "comfort-food"
+    ],
     "ingredients": [
       "Carrots",
       "Potatoes",

@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type App struct {
@@ -38,18 +39,31 @@ func addDummyDataToMongoDB(mongoDb *database.MongoDatabase) {
 
 	ctx := context.Background()
 
+	collection := mongoDb.DB.Collection("recipes")
+	// DELETE all existing data
+	_, err = collection.DeleteMany(ctx, bson.M{})
+
+	if err != nil {
+		log.Fatal("Error clearing recipes collection:", err)
+	}
+
 	var listOfRecipes []interface{}
-	for _, recipe := range recipes {
+	for _, r := range recipes {
+		recipe := bson.M{
+			"name":         r.Name,
+			"tags":         r.Tags,
+			"ingredients":  r.Ingredients,
+			"instructions": r.Instructions,
+			"publishedAt":  r.PublishedAt,
+		}
 		listOfRecipes = append(listOfRecipes, recipe)
 	}
 
-	collection := mongoDb.DB.Collection("recipes")
-
 	insertManyResult, err := collection.InsertMany(ctx, listOfRecipes)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Bulk write exception:", err)
 	}
-	log.Println("Iserted recipes: ", len(insertManyResult.InsertedIDs))
+	log.Println("Inserted recipes:", len(insertManyResult.InsertedIDs))
 }
 
 func New(config *config.Config) *App {
