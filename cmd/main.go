@@ -13,5 +13,7 @@ func main() {
 		log.Fatal(err)
 	}
 	app := app.New(cfg)
+	defer app.Close()
+
 	app.Router.Run(":8080")
 }

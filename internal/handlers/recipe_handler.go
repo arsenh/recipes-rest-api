@@ -11,6 +11,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -41,6 +42,14 @@ func NewRecipeHander(service *service.RecipeService) *RecipeHandler {
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /recipes [get]
 func (h *RecipeHandler) ListRecipesHandler(c *gin.Context) {
+	recipes, err := h.service.ListRecipes(c.Request.Context())
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "can't get list of recipes",
+		})
+		return
+	}
 	c.JSON(http.StatusOK, recipes)
 }
 

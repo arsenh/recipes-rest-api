@@ -2,10 +2,14 @@ package repository
 
 import (
 	"context"
+	"log"
 
 	"github.com/arsenh/recipes-api/internal/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+const collectionName = "recipes"
 
 type recipeRepositoryMongo struct {
 	collection *mongo.Collection
@@ -13,12 +17,30 @@ type recipeRepositoryMongo struct {
 
 func NewRecipeRepository(db *mongo.Database) RecipeRepository {
 	return &recipeRepositoryMongo{
-		collection: db.Collection("recipes"),
+		collection: db.Collection(collectionName),
 	}
 }
 
 func (r *recipeRepositoryMongo) List(ctx context.Context) ([]models.Recipe, error) {
-	return nil, nil
+	cur, err := r.collection.Find(ctx, bson.M{})
+	if err != nil {
+		log.Println("error on geting cursor for all documents in recipes collection")
+		return nil, err
+	}
+	defer cur.Close(ctx)
+
+	recipes := []models.Recipe{}
+
+	for cur.Next(ctx) {
+		var recipe models.Recipe
+		err := cur.Decode(&recipe)
+		if err != nil {
+			log.Println("error on decode recipe document")
+			return nil, err
+		}
+		recipes = append(recipes, recipe)
+	}
+	return recipes, nil
 }
 
 func (r *recipeRepositoryMongo) Create(ctx context.Context, recipe *models.Recipe) (*models.Recipe, error) {

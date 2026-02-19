@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
@@ -20,7 +19,8 @@ import (
 )
 
 type App struct {
-	Router *gin.Engine
+	Router  *gin.Engine
+	MongoDB *database.MongoDatabase
 }
 
 func addDummyDataToMongoDB(mongoDb *database.MongoDatabase) {
@@ -29,14 +29,12 @@ func addDummyDataToMongoDB(mongoDb *database.MongoDatabase) {
 
 	bytes, err := os.ReadFile("DB.json")
 	if err != nil {
-		fmt.Println("Cannot open DB.json file")
+		log.Println("Cannot open DB.json file")
 		os.Exit(-1)
 	}
 	if err = json.Unmarshal(bytes, &recipes); err != nil {
-		fmt.Println("Error on parsing json DB data")
+		log.Println("Error on parsing json DB data")
 	}
-
-	fmt.Println("DB CONNECTION URL:", os.Getenv("DATABASE_URL"))
 
 	ctx := context.Background()
 
@@ -60,7 +58,6 @@ func New(config *config.Config) *App {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer mongoDb.Close(context.Background())
 
 	// Add some data in database
 	// DELETE: for testing only
@@ -87,4 +84,10 @@ func New(config *config.Config) *App {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	return &App{Router: router}
+}
+
+func (a *App) Close() {
+	if a.MongoDB != nil {
+		_ = a.MongoDB.Close(context.Background())
+	}
 }

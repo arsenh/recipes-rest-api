@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -29,7 +30,7 @@ func ConnectMongo(url, dbName string) (*MongoDatabase, error) {
 		return nil, fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
 
-	fmt.Println("connected to MongoDB successfully")
+	log.Println("connected to MongoDB successfully")
 
 	return &MongoDatabase{
 		Client: client,
