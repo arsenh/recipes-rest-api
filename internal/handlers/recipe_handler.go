@@ -44,6 +44,21 @@ func (h *RecipeHandler) ListRecipesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, recipes)
 }
 
+// GetRecipeByIdHandler godoc
+// @Summary Get recipe by ID
+// @Description Returns a single recipe by its unique ID
+// @Tags recipes
+// @Produce json
+// @Param id path string true "Recipe ID" example(ckx123abc456)
+// @Success 200 {object} models.Recipe
+// @Failure 400 {object} map[string]string "Invalid ID format"
+// @Failure 404 {object} map[string]string "Recipe not found"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /recipes/{id} [get]
+func (h *RecipeHandler) GetRecipeByIdHandler(c *gin.Context) {
+
+}
+
 // NewRecipeHandler godoc
 // @Summary Create a new recipe
 // @Description Creates a new recipe and returns it with generated ID and timestamp

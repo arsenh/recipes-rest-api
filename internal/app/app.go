@@ -12,6 +12,8 @@ import (
 	"github.com/arsenh/recipes-api/internal/database"
 	"github.com/arsenh/recipes-api/internal/handlers"
 	"github.com/arsenh/recipes-api/internal/models"
+	"github.com/arsenh/recipes-api/internal/repository"
+	"github.com/arsenh/recipes-api/internal/service"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -64,15 +66,19 @@ func New(config *config.Config) *App {
 	// DELETE: for testing only
 	addDummyDataToMongoDB(mongoDb)
 
-	// create repository to give database url
+	// create repositories
+	recipeRepo := repository.NewRecipeRepository(mongoDb.DB)
+
 	// create service that will use this repository
+	recipeService := service.NewRecipeService(recipeRepo)
 	// create handler which will use service
-	handler := handlers.NewRecipeHander(nil)
+	handler := handlers.NewRecipeHander(recipeService)
 
 	router := gin.Default()
 
 	docs.SwaggerInfo.BasePath = "/"
 	router.GET("/recipes", handler.ListRecipesHandler)
+	router.GET("/recipes/:id", handler.GetRecipeByIdHandler)
 	router.POST("/recipes", handler.NewRecipeHandler)
 	router.PUT("/recipes/:id", handler.UpdateRecipeHandler)
 	router.DELETE("/recipes/:id", handler.DeleteRecipeHandler)
