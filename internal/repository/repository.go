@@ -17,7 +17,7 @@ type RecipeRepository interface {
 	GetByID(ctx context.Context, id string) (*models.Recipe, error)
 
 	// Update replaces a recipe by ID
-	Update(ctx context.Context, id string, recipe *models.Recipe) (*models.Recipe, error)
+	Update(ctx context.Context, id string, recipe *models.Recipe) error
 
 	// Delete removes a recipe by ID
 	Delete(ctx context.Context, id string) error

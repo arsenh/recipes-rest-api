@@ -2,14 +2,14 @@
 GET http://localhost:8080/recipes
 
 ### Get a specific recipe by ID
-//GET http://localhost:8080/recipes/1
+GET http://localhost:8080/recipes/69998feadbc3cb37354fbd0c
 
 ### Create a new recipe
 POST http://localhost:8080/recipes
 Content-Type: application/json
 
 {
-  "name": "Pancakes",
+  "name": "German Pancakes",
   "tags": ["breakfast", "sweet"],
   "ingredients": [
     "2 cups flour",
@@ -21,33 +21,33 @@ Content-Type: application/json
     "Mix dry ingredients",
     "Add wet ingredients",
     "Cook on pan until golden"
-  ],
-  "publishedAt": "2026-02-17T10:00:00Z"
+  ]
 }
+
 ### Update an existing recipe
-PUT http://localhost:8080/recipes/d6a5ece13klclebu4klg
+PUT http://localhost:8080/recipes/69998feadbc3cb37354fbd0c
 Content-Type: application/json
 
 {
-  "name": "Updated Pancakes",
-  "tags": ["breakfast", "sweet", "updated"],
-  "ingredients": [
-    "2 cups flour",
-    "1 cup milk",
-    "2 eggs",
-    "1 tbsp sugar",
-    "1 tsp vanilla"
-  ],
-  "instructions": [
-    "Mix dry ingredients",
-    "Add wet ingredients",
-    "Cook on pan until golden"
-  ],
-  "publishedAt": "2026-02-17T10:00:00Z"
+    "name": "Classic Pancakes 22222",
+    "tags": [
+      "breakfast"
+    ],
+    "ingredients": [
+      "2 cups all-purpose flour",
+      "2 eggs",
+      "1.5 cups milk qwerty",
+      "2 tbsp sugar",
+      "1 tsp baking powder",
+      "Pinch of salt"
+    ],
+    "instructions": [
+      "Mix all dry ingredients in a bowl. 2222"
+    ]
 }
 
 ### Delete a recipe by ID
-DELETE http://localhost:8080/recipes/d6a5ece13klclebu4klg
+DELETE http://localhost:8080/recipes/6999996b06e7411fc5308223
 
 ### Get recipes by tag
 GET http://localhost:8080/recipes/search?tag=dinner

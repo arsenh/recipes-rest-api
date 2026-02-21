@@ -9,7 +9,7 @@ import (
 // swagger:parameters recipes newRecipe
 type Recipe struct {
 	//swagger:ignore
-	ID           primitive.ObjectID `json:"id" bson:"_id"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name         string             `json:"name" bson:"name"`
 	Tags         []string           `json:"tags" bson:"tags"`
 	Ingredients  []string           `json:"ingredients" bson:"ingredients"`
